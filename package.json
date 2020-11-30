@@ -18,7 +18,15 @@
   },
   "homepage": "https://github.com/Andrey606/zigbeeAdapter#readme",
   "dependencies": {
+    "fast-deep-equal": "^3.1.3",
+    "humanize-duration": "^3.24.0",
+    "js-yaml": "^3.14.0",
+    "mkdir-recursive": "^0.4.0",
+    "moment": "^2.29.1",
+    "object-assign-deep": "^0.4.0",
+    "winston": "^3.3.3",
     "zigbee-herdsman": "^0.13.34",
-    "zigbee-herdsman-converters": "^13.0.3"
+    "zigbee-herdsman-converters": "^13.0.3",
+    "zigbee2mqtt": "^1.16.1"
   }
 }
