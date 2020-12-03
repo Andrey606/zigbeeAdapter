@@ -3,6 +3,7 @@ console.log('Starting zigbeeAdapter v1.0.0' +'\n');
 // #1 input data
 // state on
 let test1 = {
+    type: 'zcl',
     cluster: 6,
     attribute: 0,
     data: 1,
@@ -14,6 +15,7 @@ let test1 = {
 }
 // power 0
 let test2 = {
+    type: 'zcl',
     cluster: 12,
     attribute: 85,
     data: 0,
@@ -24,8 +26,9 @@ let test2 = {
     endpoint: 1
 }
 
-// {state: 'ON', power: 0, consumption: 0, energy: 0, temperature: 34, voltage: 217}
+// zcl {state: 'ON', power: 0, consumption: 0, energy: 0, temperature: 34, voltage: 217}
 let test3 = {
+    type: 'zcl',
     cluster: 0,
     attribute: 65281,
     data: {3: 34, 5: 8, 7: '0x0000000000000000', 8: 4886, 9: 256, 100: 1, 149: 0.0004483360389713198, 150: 2170, 152: 0, 154: 0},
@@ -36,7 +39,40 @@ let test3 = {
     endpoint: 1
 }
 
-const test = test3;
+// raw {state: 'OFF'}
+let test4 = {
+    type: 'raw',
+    cluster: 6,
+    data: [24, 212, 10, 0, 0, 16, 0, 0, 240, 35, 0, 7, 47, 3],
+    mac: null,
+    short: null,
+    modelId: 'lumi.plug',
+    endpoint: 1
+}
+
+// raw {state: 'ON'}
+let test5 = {
+    type: 'raw',
+    cluster: 6,
+    data: [24, 77, 10, 0, 0, 16, 1, 0, 240, 35, 0, 7, 47, 3],
+    mac: null,
+    short: null,
+    modelId: 'lumi.plug',
+    endpoint: 1
+}
+
+// raw {state: 'ON', power: 0, consumption: 0, energy: 0, temperature: 34, voltage: 217}
+let test6 = {
+    type: 'raw',
+    cluster: 0,
+    data: [28, 95, 17, 10, 10, 1, 255, 66, 49, 100, 16, 1, 3, 40, 25, 152, 57, 0, 0, 0, 0, 149, 57, 101, 19, 235, 57, 150, 35, 192, 8, 0, 0, 5, 33, 10, 0, 154, 32, 16, 8, 33, 22, 19, 7, 39, 0, 0, 0, 0, 0, 0, 0, 0, 9, 33, 0, 1],
+    mac: null,
+    short: null,
+    modelId: 'lumi.plug',
+    endpoint: 1
+}
+
+const test = test6;
 // console.log('test input data:');
 // console.log(test);
 // console.log('\n');
@@ -69,7 +105,7 @@ Device.fromZigbee.forEach( // перебираем все элементы ма�
 );
 
 // #5 имитация входных данных для onZclOrRawData(dataType, dataPayload) {....}
-const dataType = 'zcl';
+const dataType = test.type;
 let dataPayload = {
     frame: null,
     address: null,
@@ -83,7 +119,10 @@ dataPayload.linkquality = 100;
 dataPayload.groupID = 0;
 
 // #5.1 нужно достать норм ZclFrame
-const responseFrame = ZigbeeHerdsman.Zcl.ZclFrame.create(
+let responseFrame = null;
+if(dataType === 'zcl')
+{
+    responseFrame = ZigbeeHerdsman.Zcl.ZclFrame.create(
         ZigbeeHerdsman.Zcl.FrameType.GLOBAL, 
         ZigbeeHerdsman.Zcl.Direction.SERVER_TO_CLIENT, 
         true, 
@@ -92,7 +131,17 @@ const responseFrame = ZigbeeHerdsman.Zcl.ZclFrame.create(
         'readRsp', 
         test.cluster, 
         [{attrId: test.attribute, attrData: test.data, dataType: test.dataType}/*, {attrId: 61440, dataType: 35, attrData: 53413632}*/]
-);
+    );
+}
+else if(dataType === 'raw')
+{
+    responseFrame = ZigbeeHerdsman.Zcl.ZclFrame.fromBuffer(test.cluster, Buffer(test.data));
+}
+else
+{
+    return;
+}
+
 // console.log(responseFrame);
 dataPayload.frame = responseFrame;
 
