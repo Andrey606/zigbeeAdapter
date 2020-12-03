@@ -1,15 +1,30 @@
 console.log('Starting zigbeeAdapter v1.0.0' +'\n');
 
 // #1 input data
-const test = {
+// state on
+let test1 = {
     cluster: 6,
     attribute: 0,
-    data: 0,
-    mac: 0x10,
-    short: 0x145,
+    data: 1,
+    dataType: 16,
+    mac: null,
+    short: null,
     modelId: 'lumi.plug',
     endpoint: 1
 }
+// power 0
+let test2 = {
+    cluster: 12,
+    attribute: 85,
+    data: 0,
+    dataType: 57,
+    mac: null,
+    short: null,
+    modelId: 'lumi.plug',
+    endpoint: 1
+}
+
+const test = test2;
 // console.log('test input data:');
 // console.log(test);
 // console.log('\n');
@@ -22,7 +37,7 @@ const Device = zigbeeHerdsmanConverters.findByZigbeeModel(test.modelId);
 
 // #3 get commandId 
 const ZigbeeHerdsman = require('zigbee-herdsman');
-const clusterStruct = ZigbeeHerdsman.Zcl.Utils.getCluster(6)
+const clusterStruct = ZigbeeHerdsman.Zcl.Utils.getCluster(test.cluster)
 // console.log(clusterStruct);
 // console.log('\n');
 // console.log(clusterStruct.name); // 'genOnOff'
@@ -34,8 +49,8 @@ Device.fromZigbee.forEach( // перебираем все элементы ма�
     function print( element ) {
         if(element.cluster === clusterStruct.name)
         {
-            // console.log(element);
-            // console.log('\n');
+            console.log(element);
+            console.log('\n');
             converter = element.convert;
         }
     }
@@ -63,8 +78,8 @@ const responseFrame = ZigbeeHerdsman.Zcl.ZclFrame.create(
         null, 
         100, 
         'readRsp', 
-        6, 
-        [{attrId: 0, attrData: 0, dataType: 16}, {attrId: 61440, dataType: 35, attrData: 53413632}]
+        test.cluster, 
+        [{attrId: test.attribute, attrData: test.data, dataType: test.dataType}/*, {attrId: 61440, dataType: 35, attrData: 53413632}*/]
 );
 // console.log(responseFrame);
 dataPayload.frame = responseFrame;
@@ -86,14 +101,14 @@ meta.zclTransactionSequenceNumber = frame.Header.transactionSequenceNumber;
 meta.manufacturerCode = frame.Header.manufacturerCode;
 meta.frameControl = frame.Header.frameControl;
 eventData['meta'] = meta;
-eventData['data'] = data;
 // console.log(meta);
 
 const ZigbeeHerdsmanHelper = require('zigbee-herdsman/dist/controller/helpers');
 data = ZigbeeHerdsmanHelper.ZclFrameConverter.attributeKeyValue(dataPayload.frame);
+eventData['data'] = data;
 // console.log(data);
 
-// #6.3 дабор device и endpoint 
+// #6.3 дабор device и endpoint
 // нужно понять необходимо ли мне создавать обект device или можно обойтись без него
 const ZigbeeHerdsmanModel = require('zigbee-herdsman/dist/controller/model/device');
 // const model_1 = require("zigbee-herdsman/dist/controller/model");
@@ -104,15 +119,23 @@ const ZigbeeHerdsmanModel = require('zigbee-herdsman/dist/controller/model/devic
 // console.log(eventData);
 
 
+// #7 имитация входных данных для async this.callExtensionMethod('onZigbeeEvent', [type, data, resolvedEntity]);
+type;
+let Data = eventData;
+const resolvedEntity = {
+    definition: Device,
+    settings: null
+};
+const Meta = null;
+
+// #8 имитация даных для конвертера
+const publish = (payload) => {
+}
 
 
-
-
-
-
-
-
-
+// #9 вызов ковертера
+const converted = converter(resolvedEntity.definition, Data, publish, resolvedEntity.settings, Meta);
+console.log(converted); // undefined - если не отпарсило
 
 
 
