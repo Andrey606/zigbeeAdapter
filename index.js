@@ -49,8 +49,8 @@ Device.fromZigbee.forEach( // перебираем все элементы ма�
     function print( element ) {
         if(element.cluster === clusterStruct.name)
         {
-            console.log(element);
-            console.log('\n');
+            // console.log(element);
+            // console.log('\n');
             converter = element.convert;
         }
     }
