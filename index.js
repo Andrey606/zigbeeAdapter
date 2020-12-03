@@ -24,7 +24,19 @@ let test2 = {
     endpoint: 1
 }
 
-const test = test2;
+// {state: 'ON', power: 0, consumption: 0, energy: 0, temperature: 34, voltage: 217}
+let test3 = {
+    cluster: 0,
+    attribute: 65281,
+    data: {3: 34, 5: 8, 7: '0x0000000000000000', 8: 4886, 9: 256, 100: 1, 149: 0.0004483360389713198, 150: 2170, 152: 0, 154: 0},
+    dataType: 66,
+    mac: null,
+    short: null,
+    modelId: 'lumi.plug',
+    endpoint: 1
+}
+
+const test = test3;
 // console.log('test input data:');
 // console.log(test);
 // console.log('\n');
