@@ -169,17 +169,6 @@ data = ZigbeeHerdsmanHelper.ZclFrameConverter.attributeKeyValue(dataPayload.fram
 eventData['data'] = data;
 // console.log(data);
 
-// #6.3 дабор device и endpoint
-// нужно понять необходимо ли мне создавать обект device или можно обойтись без него
-const ZigbeeHerdsmanModel = require('zigbee-herdsman/dist/controller/model/device');
-// const model_1 = require("zigbee-herdsman/dist/controller/model");
-// const device = model_1.Device.create('EndDevice', '0xffffff', 10, 4447, 'LUMI', 'Mains (single phase)', 'lumi.plug', true, []);
-// console.log(device);
-
-// #6.4 заканчили инициализировать структуру
-// console.log(eventData);
-
-
 // #7 имитация входных данных для async this.callExtensionMethod('onZigbeeEvent', [type, data, resolvedEntity]);
 type;
 let Data = eventData;
@@ -196,13 +185,12 @@ const publish = (payload) => {
 
 // #9 вызов ковертера
 const converted = converter(resolvedEntity.definition, Data, publish, resolvedEntity.settings, Meta);
-console.log(converted); // undefined - если не отпарсило
+// console.log(converted); // undefined - если не отпарсило
 
 
-
-
-
-
+const Controller = require('./lib/controller');
+const controller = new Controller();
+controller.start();
 
 
 

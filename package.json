@@ -23,6 +23,7 @@
     "js-yaml": "^3.14.0",
     "mkdir-recursive": "^0.4.0",
     "moment": "^2.29.1",
+    "mqtt": "^4.2.6",
     "object-assign-deep": "^0.4.0",
     "winston": "^3.3.3",
     "zigbee-herdsman": "^0.13.34",
